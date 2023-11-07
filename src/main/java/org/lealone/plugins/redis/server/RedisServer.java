@@ -7,18 +7,14 @@ package org.lealone.plugins.redis.server;
 
 import java.util.Map;
 
-import org.lealone.common.logging.Logger;
-import org.lealone.common.logging.LoggerFactory;
+import org.lealone.db.LealoneDatabase;
 import org.lealone.net.WritableChannel;
 import org.lealone.server.AsyncServer;
 import org.lealone.server.Scheduler;
 
 public class RedisServer extends AsyncServer<RedisServerConnection> {
 
-    @SuppressWarnings("unused")
-    private static final Logger logger = LoggerFactory.getLogger(RedisServer.class);
-
-    public static final String VERSION = "7.2";
+    public static final String VERSION = "7.2.3";
     public static final int DEFAULT_PORT = 6379;
 
     @Override
@@ -34,6 +30,9 @@ public class RedisServer extends AsyncServer<RedisServerConnection> {
     @Override
     public synchronized void start() {
         super.start();
+        // 创建默认的 redis 数据库
+        String sql = "CREATE DATABASE IF NOT EXISTS redis";
+        LealoneDatabase.getInstance().getSystemSession().prepareStatementLocal(sql).executeUpdate();
     }
 
     @Override
