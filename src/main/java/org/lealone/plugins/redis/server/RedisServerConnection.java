@@ -17,7 +17,10 @@ import org.lealone.db.Constants;
 import org.lealone.db.session.ServerSession;
 import org.lealone.net.NetBuffer;
 import org.lealone.net.WritableChannel;
-import org.lealone.plugins.postgresql.server.io.NetBufferOutput;
+import org.lealone.plugins.redis.server.handler.CommandHandler;
+import org.lealone.plugins.redis.server.io.NetBufferOutput;
+import org.lealone.plugins.redis.server.io.RedisInputStream;
+import org.lealone.plugins.redis.server.io.RedisOutputStream;
 import org.lealone.server.AsyncServerConnection;
 import org.lealone.server.Scheduler;
 import org.lealone.server.SessionInfo;
@@ -28,6 +31,7 @@ public class RedisServerConnection extends AsyncServerConnection {
 
     private final RedisServer server;
     private final Scheduler scheduler;
+    private final CommandHandler commandHandler;
     private SocketChannel channel;
     private ServerSession session;
     private SessionInfo si;
@@ -39,6 +43,7 @@ public class RedisServerConnection extends AsyncServerConnection {
         this.scheduler = scheduler;
         this.channel = writableChannel.getSocketChannel();
         createSession();
+        commandHandler = new CommandHandler(this);
     }
 
     private void createSession() {
@@ -100,6 +105,8 @@ public class RedisServerConnection extends AsyncServerConnection {
         if (endException == e) {
             if (logger.isDebugEnabled())
                 logger.debug(endExceptionMsg);
+        } else {
+            sendError(e);
         }
         close();
     }
@@ -110,6 +117,8 @@ public class RedisServerConnection extends AsyncServerConnection {
     public static final byte MINUS_BYTE = '-';
     public static final byte COLON_BYTE = ':';
 
+    public static final RuntimeException ensureFillException = new RuntimeException();
+    private final RedisInputStream in = new RedisInputStream();
     private final ByteBuffer buffer = ByteBuffer.allocate(4096);
     private final EOFException endException = new EOFException();
     private int endOfStreamCount;
@@ -120,6 +129,9 @@ public class RedisServerConnection extends AsyncServerConnection {
         try {
             int readBytes = channel.read(buffer);
             if (readBytes > 0) {
+                buffer.flip();
+                in.setBuf(buffer.array(), buffer.limit());
+                handle();
                 endOfStreamCount = 0;
             } else {
                 // 客户端非正常关闭时，可能会触发JDK的bug，导致run方法死循环，selector.select不会阻塞
@@ -134,15 +146,73 @@ public class RedisServerConnection extends AsyncServerConnection {
                 }
             }
         } catch (Exception e) {
+            if (e == ensureFillException)
+                return;
             handleException(e);
+            return;
         }
+    }
 
-        NetBufferOutput out = new NetBufferOutput(getWritableChannel(), 4096,
-                scheduler.getDataBufferFactory());
-        out.write(PLUS_BYTE);
-        out.write("OK".getBytes());
+    private void handle() {
+        final byte b = in.readByte();
+        switch (b) {
+        case PLUS_BYTE:
+        case DOLLAR_BYTE:
+        case COLON_BYTE:
+        case MINUS_BYTE:
+            sendStatusCodeReply();
+            break;
+        case ASTERISK_BYTE:
+            handleCommand();
+            break;
+        default:
+            sendError("Unknown request: " + (char) b);
+        }
+    }
+
+    private void handleCommand() {
+        int size = in.readIntCrLf();
+        String[] commandArguments = new String[size];
+        for (int i = 0; i < size; i++) {
+            in.readLine();
+            commandArguments[i] = in.readLine();
+        }
+        commandHandler.handle(commandArguments);
+    }
+
+    public void sendError(Exception e) {
+        sendError(e.getMessage());
+    }
+
+    public void sendError(String message) {
+        RedisOutputStream out = createOut();
+        out.write(MINUS_BYTE);
+        out.write(message.getBytes());
         out.write('\r');
         out.write('\n');
         out.flush();
+    }
+
+    public void sendStatusCodeReply() {
+        RedisOutputStream out = createOut();
+        out.write(PLUS_BYTE);
+        out.write("OK".getBytes());
+        out.writeCrLf();
+        out.flush();
+    }
+
+    public void sendBulkReply(Object value) {
+        RedisOutputStream out = createOut();
+        out.write(DOLLAR_BYTE);
+        byte[] bytes = value.toString().getBytes();
+        out.writeIntCrLf(bytes.length);
+        out.write(bytes);
+        out.writeCrLf();
+        out.flush();
+    }
+
+    private RedisOutputStream createOut() {
+        return new RedisOutputStream(new NetBufferOutput(getWritableChannel(),
+                RedisOutputStream.OUTPUT_BUFFER_SIZE, scheduler.getDataBufferFactory()));
     }
 }

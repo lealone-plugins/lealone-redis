@@ -24,18 +24,6 @@ public class NetBufferOutput implements AutoCloseable {
         reset();
     }
 
-    public void writeShort(int v) {
-        write((v >>> 8) & 0xFF);
-        write((v >>> 0) & 0xFF);
-    }
-
-    public void writeInt(int v) {
-        write((v >>> 24) & 0xFF);
-        write((v >>> 16) & 0xFF);
-        write((v >>> 8) & 0xFF);
-        write((v >>> 0) & 0xFF);
-    }
-
     public void write(int b) {
         buffer.appendByte((byte) b);
     }
@@ -46,17 +34,6 @@ public class NetBufferOutput implements AutoCloseable {
 
     public void write(byte b[], int off, int len) {
         buffer.appendBytes(b, off, len);
-    }
-
-    public void setByte(int pos, byte b) {
-        buffer.setByte(pos, b);
-    }
-
-    public void setInt(int pos, int v) {
-        buffer.setByte(pos, (byte) ((v >>> 24) & 0xFF));
-        buffer.setByte(pos + 1, (byte) ((v >>> 16) & 0xFF));
-        buffer.setByte(pos + 2, (byte) ((v >>> 8) & 0xFF));
-        buffer.setByte(pos + 3, (byte) (v & 0xFF));
     }
 
     public int length() {

@@ -5,6 +5,8 @@
  */
 package org.lealone.plugins.redis;
 
+import java.util.Map;
+
 import org.lealone.db.PluginBase;
 import org.lealone.plugins.redis.server.RedisServerEngine;
 
@@ -14,4 +16,12 @@ public class RedisPlugin extends PluginBase {
         super(RedisServerEngine.NAME);
     }
 
+    @Override
+    public void init(Map<String, String> config) {
+        super.init(config);
+    }
+
+    @Override
+    public void close() {
+    }
 }

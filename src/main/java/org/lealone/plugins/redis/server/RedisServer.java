@@ -31,7 +31,7 @@ public class RedisServer extends AsyncServer<RedisServerConnection> {
     public synchronized void start() {
         super.start();
         // 创建默认的 redis 数据库
-        String sql = "CREATE DATABASE IF NOT EXISTS redis";
+        String sql = "CREATE DATABASE IF NOT EXISTS redis PARAMETERS(PERSISTENT=true)";
         LealoneDatabase.getInstance().getSystemSession().prepareStatementLocal(sql).executeUpdate();
     }
 
