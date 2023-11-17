@@ -14,6 +14,7 @@ import org.lealone.common.logging.Logger;
 import org.lealone.common.logging.LoggerFactory;
 import org.lealone.db.ConnectionInfo;
 import org.lealone.db.Constants;
+import org.lealone.db.scheduler.Scheduler;
 import org.lealone.db.session.ServerSession;
 import org.lealone.net.NetBuffer;
 import org.lealone.net.WritableChannel;
@@ -22,7 +23,6 @@ import org.lealone.plugins.redis.server.io.NetBufferOutput;
 import org.lealone.plugins.redis.server.io.RedisInputStream;
 import org.lealone.plugins.redis.server.io.RedisOutputStream;
 import org.lealone.server.AsyncServerConnection;
-import org.lealone.server.Scheduler;
 import org.lealone.server.SessionInfo;
 
 public class RedisServerConnection extends AsyncServerConnection {

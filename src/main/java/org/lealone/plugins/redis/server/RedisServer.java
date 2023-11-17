@@ -8,9 +8,9 @@ package org.lealone.plugins.redis.server;
 import java.util.Map;
 
 import org.lealone.db.LealoneDatabase;
+import org.lealone.db.scheduler.Scheduler;
 import org.lealone.net.WritableChannel;
 import org.lealone.server.AsyncServer;
-import org.lealone.server.Scheduler;
 
 public class RedisServer extends AsyncServer<RedisServerConnection> {
 
