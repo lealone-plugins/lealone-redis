@@ -23,7 +23,7 @@ import org.lealone.plugins.redis.server.io.NetBufferOutput;
 import org.lealone.plugins.redis.server.io.RedisInputStream;
 import org.lealone.plugins.redis.server.io.RedisOutputStream;
 import org.lealone.server.AsyncServerConnection;
-import org.lealone.server.SessionInfo;
+import org.lealone.server.scheduler.SessionInfo;
 
 public class RedisServerConnection extends AsyncServerConnection {
 
