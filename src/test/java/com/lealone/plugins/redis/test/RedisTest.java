@@ -3,13 +3,13 @@
  * Licensed under the Server Side Public License, v 1.
  * Initial Developer: zhh
  */
-package org.lealone.plugins.redis.test;
+package com.lealone.plugins.redis.test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.lealone.test.TestBase;
+import com.lealone.test.TestBase;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

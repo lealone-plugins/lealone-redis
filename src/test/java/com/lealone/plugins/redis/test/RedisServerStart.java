@@ -3,9 +3,9 @@
  * Licensed under the Server Side Public License, v 1.
  * Initial Developer: zhh
  */
-package org.lealone.plugins.redis.test;
+package com.lealone.plugins.redis.test;
 
-import org.lealone.main.Lealone;
+import com.lealone.main.Lealone;
 
 public class RedisServerStart {
 

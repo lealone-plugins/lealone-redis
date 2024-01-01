@@ -26,7 +26,7 @@
 
 ```sql
 create plugin redis
-  implement by 'org.lealone.plugins.redis.server.RedisServerEngine' 
+  implement by 'com.lealone.plugins.redis.server.RedisServerEngine' 
   class path 'E:\lealone\lealone-plugins\redis\target\lealone-redis-plugin-6.0.0.jar' --最好使用绝对路径
   parameters (port=6379); --端口号默认就是6379，如果被其他进程占用了可以改成别的
  

@@ -6,11 +6,11 @@
  * BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
  * for the specific language governing permissions and limitations under the License.
  */
-package org.lealone.plugins.redis.server.io;
+package com.lealone.plugins.redis.server.io;
 
 import java.io.ByteArrayOutputStream;
 
-import org.lealone.plugins.redis.server.RedisServerConnection;
+import com.lealone.plugins.redis.server.RedisServerConnection;
 
 /**
  * This class assumes (to some degree) that we are reading a RESP stream. As such it assumes certain
