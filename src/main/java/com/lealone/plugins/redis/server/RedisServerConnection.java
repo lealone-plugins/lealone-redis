@@ -18,13 +18,12 @@ import com.lealone.db.scheduler.Scheduler;
 import com.lealone.db.session.ServerSession;
 import com.lealone.net.NetBuffer;
 import com.lealone.net.WritableChannel;
-import com.lealone.server.AsyncServerConnection;
-import com.lealone.server.scheduler.SessionInfo;
-
 import com.lealone.plugins.redis.server.handler.CommandHandler;
 import com.lealone.plugins.redis.server.io.NetBufferOutput;
 import com.lealone.plugins.redis.server.io.RedisInputStream;
 import com.lealone.plugins.redis.server.io.RedisOutputStream;
+import com.lealone.server.AsyncServerConnection;
+import com.lealone.server.scheduler.SessionInfo;
 
 public class RedisServerConnection extends AsyncServerConnection {
 
@@ -39,7 +38,7 @@ public class RedisServerConnection extends AsyncServerConnection {
 
     protected RedisServerConnection(RedisServer server, WritableChannel writableChannel,
             Scheduler scheduler) {
-        super(writableChannel, true);
+        super(writableChannel);
         this.server = server;
         this.scheduler = scheduler;
         this.channel = writableChannel.getSocketChannel();
