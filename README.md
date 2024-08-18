@@ -13,9 +13,9 @@
 
 运行 `mvn clean package -Dmaven.test.skip=true`
 
-生成 jar 包 `target\lealone-redis-plugin-6.0.0.jar`
+生成 jar 包 `target\lealone-redis-plugin-6.0.1.jar`
 
-假设 jar 包的绝对路径是 `E:\lealone\lealone-plugins\redis\target\lealone-redis-plugin-6.0.0.jar`
+假设 jar 包的绝对路径是 `E:\lealone\lealone-plugins\redis\target\lealone-redis-plugin-6.0.1.jar`
 
 
 ## 运行插件
@@ -27,7 +27,7 @@
 ```sql
 create plugin redis
   implement by 'com.lealone.plugins.redis.server.RedisServerEngine' 
-  class path 'E:\lealone\lealone-plugins\redis\target\lealone-redis-plugin-6.0.0.jar' --最好使用绝对路径
+  class path 'E:\lealone\lealone-plugins\redis\target\lealone-redis-plugin-6.0.1.jar' --最好使用绝对路径
   parameters (port=6379); --端口号默认就是6379，如果被其他进程占用了可以改成别的
  
 start plugin redis;
